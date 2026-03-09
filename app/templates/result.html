@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NutriVision | Result</title>
+
+<style>
+
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#a0f1cf,#8fd3f4);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.box{
+background:rgba(255,255,255,0.25);
+backdrop-filter:blur(20px);
+padding:40px;
+border-radius:20px;
+box-shadow:0 10px 40px rgba(0,0,0,0.15);
+text-align:center;
+width:90%;
+max-width:650px;
+}
+
+h2{
+margin-bottom:25px;
+font-size:28px;
+color:#3a3a3a;
+}
+
+.result-text{
+font-size:18px;
+margin-bottom:10px;
+}
+
+.progress{
+height:14px;
+background:#e5e5e5;
+border-radius:20px;
+margin:15px 0 30px 0;
+overflow:hidden;
+}
+
+.bar{
+height:14px;
+background:linear-gradient(90deg,#4CAF50,#8bc34a);
+border-radius:20px;
+transition:width 0.8s ease;
+}
+
+.food-title{
+font-size:22px;
+margin:20px 0 15px 0;
+font-weight:600;
+}
+
+.food-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+gap:20px;
+justify-items:center;
+}
+
+.food-card{
+background:white;
+border-radius:14px;
+padding:15px;
+width:120px;
+box-shadow:0 4px 15px rgba(0,0,0,0.1);
+transition:transform 0.25s;
+}
+
+.food-card:hover{
+transform:scale(1.05);
+}
+
+.food-card img{
+width:100%;
+height:90px;
+object-fit:cover;
+border-radius:10px;
+margin-bottom:8px;
+}
+
+.food-card p{
+margin:0;
+font-weight:500;
+}
+
+.try-btn{
+display:inline-block;
+margin-top:30px;
+background:#4CAF50;
+color:white;
+padding:12px 28px;
+border-radius:8px;
+text-decoration:none;
+font-size:16px;
+}
+
+.try-btn:hover{
+background:#43a047;
+}
+
+.note{
+font-size:12px;
+color:red;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Prediction Result</h2>
+
+<div id="output"></div>
+
+<div class="progress">
+<div class="bar" id="bar"></div>
+</div>
+
+<div id="foods"></div>
+
+<a href="/upload" class="try-btn">Try Another Image</a>
+
+<div class="note">
+* This system provides preliminary screening only.
+</div>
+
+</div>
+
+<script>
+
+let data = JSON.parse(localStorage.getItem("result"));
+
+const output = document.getElementById("output");
+const foods = document.getElementById("foods");
+const bar = document.getElementById("bar");
+
+if(!data){
+
+output.innerHTML = "<p>No prediction data found.</p>";
+
+}else{
+
+output.innerHTML = `
+<div class="result-text"><b>Main Deficiency:</b> ${data.main_deficiency}</div>
+<div class="result-text"><b>Confidence:</b> ${data.confidence}%</div>
+<div class="result-text"><b>Images Used:</b> ${data.images_used}</div>
+`;
+
+bar.style.width = data.confidence + "%";
+
+if(data.foods && data.foods.length > 0){
+
+foods.innerHTML = `
+<div class="food-title">Recommended Foods</div>
+<div class="food-grid">
+${data.foods.map(f => `
+<div class="food-card">
+<img src="/static/foods/${f.image}">
+<p>${f.name}</p>
+</div>
+`).join("")}
+</div>
+`;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

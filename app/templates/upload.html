@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NutriVision | Upload Images</title>
+
+<style>
+
+body{
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#a0f1cf 0%,#8fd3f4 100%);
+height:100vh;
+margin:0;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.card{
+background:rgba(255,255,255,0.2);
+backdrop-filter:blur(20px);
+padding:40px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+text-align:center;
+width:90%;
+max-width:450px;
+color:white;
+}
+
+input[type=file]{
+margin:15px 0;
+background:white;
+padding:10px;
+border-radius:8px;
+border:none;
+width:100%;
+}
+
+button{
+border:none;
+padding:12px 25px;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+margin:10px 5px;
+color:white;
+}
+
+.add-btn{background:#ff7a5a;}
+.capture-btn{background:#ffb300;}
+.predict-btn{background:#7b61ff;}
+
+.preview-img{
+width:60px;
+margin:5px;
+border-radius:6px;
+}
+
+ul{
+list-style:none;
+padding:0;
+}
+
+video,canvas{
+display:none;
+width:100%;
+border-radius:10px;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Upload Facial Images</h2>
+
+<input type="file" id="imageInput" accept="image/*" multiple>
+
+<button class="add-btn" onclick="addImage()">Add Image</button>
+<button class="capture-btn" id="captureBtn">📸 Capture Image</button>
+
+<ul id="preview"></ul>
+
+<video id="camera" autoplay></video>
+<canvas id="canvas" width="350" height="250"></canvas>
+
+<button class="predict-btn" onclick="sendImages()">Predict</button>
+
+</div>
+
+<script>
+
+let imageStore=[];
+
+const captureBtn=document.getElementById("captureBtn");
+const camera=document.getElementById("camera");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+const preview=document.getElementById("preview");
+
+let stream=null;
+
+function addImage(){
+
+let input=document.getElementById("imageInput");
+
+if(!input.files.length){
+alert("Select image first");
+return;
+}
+
+for(let file of input.files){
+
+imageStore.push(file);
+
+let li=document.createElement("li");
+li.innerText=file.name;
+preview.appendChild(li);
+
+let img=document.createElement("img");
+img.src=URL.createObjectURL(file);
+img.className="preview-img";
+preview.appendChild(img);
+
+}
+
+input.value="";
+}
+
+captureBtn.onclick=async function(){
+
+if(!stream){
+
+stream=await navigator.mediaDevices.getUserMedia({video:true});
+camera.srcObject=stream;
+camera.style.display="block";
+
+}
+
+else{
+
+ctx.drawImage(camera,0,0,canvas.width,canvas.height);
+
+canvas.toBlob(blob=>{
+
+let file=new File([blob],"capture.jpg",{type:"image/jpeg"});
+
+imageStore.push(file);
+
+let li=document.createElement("li");
+li.innerText="capture.jpg";
+preview.appendChild(li);
+
+let img=document.createElement("img");
+img.src=URL.createObjectURL(file);
+img.className="preview-img";
+preview.appendChild(img);
+
+},"image/jpeg");
+
+}
+
+}
+
+function sendImages(){
+
+if(imageStore.length===0){
+alert("Add image first");
+return;
+}
+
+let formData=new FormData();
+
+imageStore.forEach((img,i)=>{
+formData.append("images",img,"image_"+i+".jpg");
+});
+
+fetch("/predict",{
+method:"POST",
+body:formData
+})
+.then(res=>res.json())
+.then(data=>{
+
+console.log("Prediction:",data);
+
+localStorage.setItem("result",JSON.stringify(data));
+
+window.location="/result";
+
+})
+.catch(err=>alert(err));
+
+}
+
+</script>
+
+</body>
+</html>

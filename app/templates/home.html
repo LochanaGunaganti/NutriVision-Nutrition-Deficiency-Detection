@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NutriVision | AI Nutrition Deficiency Detection</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <style>
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .home-container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding: 60px 40px;
+      color: white;
+      width: 90%;
+      max-width: 600px;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    h1 {
+      font-size: 3rem;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      animation: slideDown 1s ease-out;
+    }
+
+    .tagline{
+      font-size:1.2rem;
+      margin-bottom:10px;
+      color:#ffffff;
+    }
+
+    .subtext{
+      font-size:0.95rem;
+      margin-bottom:40px;
+      color:#f1f1f1;
+    }
+
+    .start-btn {
+      background: #4CAF50;
+      color: white;
+      font-size: 18px;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: 0.3s;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      display:inline-block;
+    }
+
+    .start-btn:hover {
+      background: #45a049;
+      transform: scale(1.05);
+    }
+
+    /* Animations */
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+
+    @media(max-width:600px){
+      h1{
+        font-size:2.2rem;
+      }
+
+      .tagline{
+        font-size:1rem;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="home-container">
+
+    <h1>NutriVision</h1>
+
+    <p class="tagline">AI-Powered Nutrition Deficiency Screening</p>
+
+    <p class="subtext">
+      Upload facial images or use the camera to detect possible vitamin deficiencies
+      and receive personalized food recommendations.
+    </p>
+    <p style="font-size:14px;">
+      Model: CNN | Framework: TensorFlow + Flask
+    </p>
+    <a href="/upload" class="start-btn">Get Started</a>
+
+  </div>
+
+</body>
+</html>

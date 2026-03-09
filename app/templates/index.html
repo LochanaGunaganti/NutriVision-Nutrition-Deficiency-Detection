@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NutriVision | Nutrition Deficiency Detection</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(15px);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      margin: 15px 0;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 25px;
+      margin: 8px;
+      font-size: 15px;
+      color: white;
+      background: #2563eb;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #1e4fd6;
+      transform: translateY(-2px);
+    }
+
+    ul {
+      text-align: left;
+      list-style: none;
+      padding: 0;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 10px;
+      margin-top: 10px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    ul li {
+      padding: 6px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    ul li:last-child {
+      border-bottom: none;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      font-weight: 500;
+      color: #333;
+      display: none;
+      animation: slideUp 0.8s ease;
+    }
+
+    .disclaimer {
+      font-size: 12px;
+      color: red;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .back-btn {
+      background: #4CAF50;
+      color: white;
+      border-radius: 8px;
+      padding: 10px 20px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 15px;
+    }
+
+    .back-btn:hover {
+      background: #3e8e41;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Nutrition Deficiency Detection</h2>
+
+    <input type="file" id="imageInput" multiple accept="image/*">
+    <button type="button" onclick="addImage()">Add Image</button>
+
+    <h4 style="text-align:left;">Selected Images:</h4>
+    <ul id="preview"></ul>
+
+    <button type="button" onclick="sendImages()">Predict</button>
+    <div id="result"></div>
+
+    <div class="disclaimer">
+      * This system provides preliminary screening only. Not a medical diagnosis.
+    </div>
+
+    <a href="/" class="back-btn">🔙 Home</a>
+  </div>
+
+  <script>
+
+let imageStore = [];
+
+function addImage() {
+
+  const input = document.getElementById("imageInput");
+  const preview = document.getElementById("preview");
+
+  if (!input.files.length) {
+    alert("Please choose at least one image.");
+    return;
+  }
+
+  for (let file of input.files) {
+    imageStore.push(file);
+
+    const li = document.createElement("li");
+    li.textContent = file.name;
+
+    preview.appendChild(li);
+  }
+
+  input.value = "";
+}
+
+function sendImages() {
+
+  if (imageStore.length === 0) {
+    alert("Add at least one image before predicting!");
+    return;
+  }
+
+  const formData = new FormData();
+
+  imageStore.forEach(img => {
+    formData.append("images", img);
+  });
+
+  fetch("/predict", {
+    method: "POST",
+    body: formData
+  })
+
+  .then(res => res.json())
+
+  .then(data => {
+
+    let resultBox = document.getElementById("result");
+    resultBox.style.display = "block";
+
+    let html = "";
+
+    html += `<b>Main Deficiency:</b> ${data.main_deficiency}<br>`;
+    html += `<b>Confidence:</b> ${data.confidence}%<br>`;
+    html += `<b>Risk Level:</b> ${data.risk_level}<br>`;
+    html += `<b>Health Score:</b> ${data.health_score}/100<br>`;
+    html += `<b>Images Used:</b> ${data.images_used}<br><br>`;
+
+    html += `<b>Top Deficiencies:</b><br>`;
+
+    data.top_deficiencies.forEach(d => {
+      html += `${d.deficiency} : ${d.confidence}%<br>`;
+    });
+
+    html += `<br><b>Recommended Foods:</b><br>`;
+
+    if(data.foods.length === 0){
+      html += `No deficiency detected`;
+    }
+    else{
+      data.foods.forEach(f => {
+        html += `${f.name}<br>`;
+      });
+    }
+
+    resultBox.innerHTML = html;
+
+  })
+
+  .catch(err => {
+    alert("Error: " + err);
+  });
+
+}
+
+</script>
+</body>
+</html>
