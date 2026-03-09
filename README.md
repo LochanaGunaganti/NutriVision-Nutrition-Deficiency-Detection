@@ -105,10 +105,3 @@ Egg, Milk
 ## Disclaimer
 
 This system provides **preliminary screening only** and is **not a medical diagnosis tool**.
-
----
-
-## Author
-
-Gunag
-AI / Computer Vision Project
