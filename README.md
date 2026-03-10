@@ -1,4 +1,4 @@
-# NutriVision – AI-Based Nutrition Deficiency Detection
+## NutriVision : Facial Image Analysis for Health Assessment
 
 NutriVision is a computer vision system that detects possible **nutritional deficiencies from facial images** using a Convolutional Neural Network (CNN).
 The system analyzes facial features such as **skin tone, lip texture, and facial discoloration** and predicts deficiencies like **Vitamin A, Vitamin B, Vitamin C, Vitamin D, Vitamin E, and Iron deficiency**.
@@ -105,3 +105,4 @@ Egg, Milk
 ## Disclaimer
 
 This system provides **preliminary screening only** and is **not a medical diagnosis tool**.
+
